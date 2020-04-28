@@ -12,7 +12,7 @@ case "$cmd" in
     dipy_track_local:eudx)
         cat > script.sh <<EOF
 #!/bin/bash
-dipy_mask --force \
+dipy_track_local --force \
     --use_binary_mask $(jq -r .use_binary_mask config.json) \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
@@ -26,7 +26,7 @@ EOF
     dipy_track_local:det)
         cat > script.sh <<EOF
 #!/bin/bash
-dipy_mask --force \
+dipy_track_local --force \
     --use_binary_mask $(jq -r .use_binary_mask config.json) \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
@@ -40,7 +40,7 @@ EOF
     dipy_track_local:prob)
         cat > script.sh <<EOF
 #!/bin/bash
-dipy_mask --force \
+dipy_track_local --force \
     --use_binary_mask $(jq -r .use_binary_mask config.json) \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
@@ -53,7 +53,7 @@ EOF
     dipy_track_local:cp)
         cat > script.sh <<EOF
 #!/bin/bash
-dipy_mask --force \
+dipy_track_local --force \
     --use_binary_mask $(jq -r .use_binary_mask config.json) \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
