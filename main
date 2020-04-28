@@ -9,22 +9,59 @@ set -x
 cmd=`jq -r .command config.json`
 case "$cmd" in
 
-    dipy_mask:dwi)
+    dipy_track_local:eudx)
         cat > script.sh <<EOF
 #!/bin/bash
 dipy_mask --force \
-    --out_dir $PWD \
-    --out_mask mask.nii.gz \
-    $(jq -r .dwi config.json) $(jq -r .lb config.json)
+    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    --stopping_thr $(jq -r .stopping_thr config.json) \
+    --seed_density $(jq -r .seed_density config.json) \
+    --step_size $(jq -r .step_size config.json) \
+    --tracking_method "eudx" \
+    --pmf_threshold $(jq -r .pmf_threshold config.json) \
+    --max_angle $(jq -r .max_angle config.json) \
+    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
 EOF
       ;;
-    dipy_mask:tensor)
+    dipy_track_local:det)
         cat > script.sh <<EOF
 #!/bin/bash
 dipy_mask --force \
-    --out_dir $PWD \
-    --out_mask mask.nii.gz \
-    $(jq -r .fa config.json) $(jq -r .lb config.json)
+    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    --stopping_thr $(jq -r .stopping_thr config.json) \
+    --seed_density $(jq -r .seed_density config.json) \
+    --step_size $(jq -r .step_size config.json) \
+    --tracking_method "det" \
+    --pmf_threshold $(jq -r .pmf_threshold config.json) \
+    --max_angle $(jq -r .max_angle config.json) \
+    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
+EOF
+        ;;
+    dipy_track_local:prob)
+        cat > script.sh <<EOF
+#!/bin/bash
+dipy_mask --force \
+    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    --stopping_thr $(jq -r .stopping_thr config.json) \
+    --seed_density $(jq -r .seed_density config.json) \
+    --step_size $(jq -r .step_size config.json) \
+    --tracking_method "prob" \
+    --pmf_threshold $(jq -r .pmf_threshold config.json) \
+    --max_angle $(jq -r .max_angle config.json) \
+    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
+EOF
+    dipy_track_local:cp)
+        cat > script.sh <<EOF
+#!/bin/bash
+dipy_mask --force \
+    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    --stopping_thr $(jq -r .stopping_thr config.json) \
+    --seed_density $(jq -r .seed_density config.json) \
+    --step_size $(jq -r .step_size config.json) \
+    --tracking_method "cp" \
+    --pmf_threshold $(jq -r .pmf_threshold config.json) \
+    --max_angle $(jq -r .max_angle config.json) \
+    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
 EOF
         ;;
     *)
