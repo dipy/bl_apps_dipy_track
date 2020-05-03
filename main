@@ -12,8 +12,14 @@ case "$cmd" in
     dipy_track_local:eudx)
         cat > script.sh <<EOF
 #!/bin/bash
+USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
+if [ "$USE_BINARY_MASK" = true ]; then
+    USE_BINARY_MASK="--use_binary_mask"
+else
+    USE_BINARY_MASK=" "
+fi
 dipy_track_local --force \
-    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    $USE_BINARY_MASK  \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
     --step_size $(jq -r .step_size config.json) \
@@ -26,8 +32,14 @@ EOF
     dipy_track_local:det)
         cat > script.sh <<EOF
 #!/bin/bash
+USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
+if [ "$USE_BINARY_MASK" = true ]; then
+    USE_BINARY_MASK="--use_binary_mask"
+else
+    USE_BINARY_MASK=" "
+fi
 dipy_track_local --force \
-    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    $USE_BINARY_MASK  \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
     --step_size $(jq -r .step_size config.json) \
@@ -40,8 +52,14 @@ EOF
     dipy_track_local:prob)
         cat > script.sh <<EOF
 #!/bin/bash
+USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
+if [ "$USE_BINARY_MASK" = true ]; then
+    USE_BINARY_MASK="--use_binary_mask"
+else
+    USE_BINARY_MASK=" "
+fi
 dipy_track_local --force \
-    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    $USE_BINARY_MASK  \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
     --step_size $(jq -r .step_size config.json) \
@@ -50,11 +68,18 @@ dipy_track_local --force \
     --max_angle $(jq -r .max_angle config.json) \
     $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
 EOF
+        ;;
     dipy_track_local:cp)
         cat > script.sh <<EOF
 #!/bin/bash
+USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
+if [ "$USE_BINARY_MASK" = true ]; then
+    USE_BINARY_MASK="--use_binary_mask"
+else
+    USE_BINARY_MASK=" "
+fi
 dipy_track_local --force \
-    --use_binary_mask $(jq -r .use_binary_mask config.json) \
+    $USE_BINARY_MASK  \
     --stopping_thr $(jq -r .stopping_thr config.json) \
     --seed_density $(jq -r .seed_density config.json) \
     --step_size $(jq -r .step_size config.json) \
