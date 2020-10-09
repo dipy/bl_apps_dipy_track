@@ -35,7 +35,7 @@ You can see a list of [DIPY Tracking Apps currently registered on Brainlife](htt
 To run this command, you can simply type:
 
 ```bash
-singularity exec -e docker://brainlife/dipy:1.1.1 dipy_track [your_args]
+singularity exec -e docker://brainlife/dipy:1.1.1 dipy_track_local [your_args]
 ```
 
 ## Input
