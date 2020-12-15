@@ -1,13 +1,12 @@
 {
-    "command": "dipy_track_local:eudx",
-    "use_binary_mask":False,
-    "stopping_thr":0.2,
-    "seed_density":1,
-    "step_size":0.5,
-    "tracking_method":"eudx",
-    "pmf_threshold":0.1,
-    "max_angle":30.,
-    "peaks":,
-    "stopping_files":,
-    "seeding_files":,
+    "tracking_method": "eudx",
+    "use_binary_mask": false,
+    "stopping_thr": 0.2,
+    "seed_density": 1,
+    "step_size": 0.5,
+    "pmf_threshold": 0.1,
+    "max_angle": 30.0,
+    "peaks": "testdata/peaks.pam5",
+    "stopping_files": "testdata/fa.nii.gz",
+    "seeding_files": "testdata/mask.nii.gz"
 }

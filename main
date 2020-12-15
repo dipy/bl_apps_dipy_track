@@ -1,100 +1,37 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=6
-#PBS -l vmem=16gb
+#PBS -l nodes=1:ppn=8
+#PBS -l vmem=20gb
 #PBS -l walltime=10:00:00
+
+export SINGULARITYENV_OMP_NUM_THREADS=7
 
 set -e
 set -x
 
-cmd=`jq -r .command config.json`
-case "$cmd" in
+mkdir -p output
+chmod -R +w output
 
-    dipy_track_local:eudx)
-        cat > script.sh <<EOF
-#!/bin/bash
-USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
-if [ "$USE_BINARY_MASK" = true ]; then
-    USE_BINARY_MASK="--use_binary_mask"
-else
-    USE_BINARY_MASK=" "
-fi
-dipy_track_local --force \
-    $USE_BINARY_MASK  \
-    --stopping_thr $(jq -r .stopping_thr config.json) \
-    --seed_density $(jq -r .seed_density config.json) \
-    --step_size $(jq -r .step_size config.json) \
-    --tracking_method "eudx" \
-    --pmf_threshold $(jq -r .pmf_threshold config.json) \
-    --max_angle $(jq -r .max_angle config.json) \
-    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
-EOF
-      ;;
-    dipy_track_local:det)
-        cat > script.sh <<EOF
-#!/bin/bash
-USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
-if [ "$USE_BINARY_MASK" = true ]; then
-    USE_BINARY_MASK="--use_binary_mask"
-else
-    USE_BINARY_MASK=" "
-fi
-dipy_track_local --force \
-    $USE_BINARY_MASK  \
-    --stopping_thr $(jq -r .stopping_thr config.json) \
-    --seed_density $(jq -r .seed_density config.json) \
-    --step_size $(jq -r .step_size config.json) \
-    --tracking_method "det" \
-    --pmf_threshold $(jq -r .pmf_threshold config.json) \
-    --max_angle $(jq -r .max_angle config.json) \
-    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
-EOF
-        ;;
-    dipy_track_local:prob)
-        cat > script.sh <<EOF
-#!/bin/bash
-USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
-if [ "$USE_BINARY_MASK" = true ]; then
-    USE_BINARY_MASK="--use_binary_mask"
-else
-    USE_BINARY_MASK=" "
-fi
-dipy_track_local --force \
-    $USE_BINARY_MASK  \
-    --stopping_thr $(jq -r .stopping_thr config.json) \
-    --seed_density $(jq -r .seed_density config.json) \
-    --step_size $(jq -r .step_size config.json) \
-    --tracking_method "prob" \
-    --pmf_threshold $(jq -r .pmf_threshold config.json) \
-    --max_angle $(jq -r .max_angle config.json) \
-    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
-EOF
-        ;;
-    dipy_track_local:cp)
-        cat > script.sh <<EOF
-#!/bin/bash
-USE_BINARY_MASK=`jq -r '.use_binary_mask' config.json`
-if [ "$USE_BINARY_MASK" = true ]; then
-    USE_BINARY_MASK="--use_binary_mask"
-else
-    USE_BINARY_MASK=" "
-fi
-dipy_track_local --force \
-    $USE_BINARY_MASK  \
-    --stopping_thr $(jq -r .stopping_thr config.json) \
-    --seed_density $(jq -r .seed_density config.json) \
-    --step_size $(jq -r .step_size config.json) \
-    --tracking_method "cp" \
-    --pmf_threshold $(jq -r .pmf_threshold config.json) \
-    --max_angle $(jq -r .max_angle config.json) \
-    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) $(jq -r .seeding_files config.json)
-EOF
-        ;;
-    *)
-        echo "invalid command: $cmd"
-        exit 1
-esac
+USE_BINARY_MASK=$(jq -r .use_binary_mask config.json)
 
-chmod +x script.sh
-SINGULARITYENV_PYTHONNOUSERSITE=true singularity exec -e docker://brainlife/dipy:1.1.1 ./script.sh
+if $USE_BINARY_MASK
+then
+    USE_BINARY_MASK="--use_binary_mask"
+else
+    USE_BINARY_MASK=""
+fi
+
+time singularity exec -e docker://brainlife/dipy:1.1.1 dipy_track_local \
+    --force \
+    --out_dir output \
+    --out_tractogram track.trk \
+    $USE_BINARY_MASK \
+    --stopping_thr $(jq -r .stopping_thr config.json) \
+    --seed_density $(jq -r .seed_density config.json) \
+    --step_size $(jq -r .step_size config.json) \
+    --tracking_method $(jq -r .tracking_method config.json) \
+    --pmf_threshold $(jq -r .pmf_threshold config.json) \
+    --max_angle $(jq -r .max_angle config.json) \
+    $(jq -r .peaks config.json) $(jq -r .stopping_files config.json) \
+    $(jq -r .seeding_files config.json)
 
 echo "done"
