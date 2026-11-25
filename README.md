@@ -6,6 +6,55 @@
 
 # Dipy Tracking
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Tracks white matter streamlines with DIPY 1.1.1 dipy_track_local using the closest-peaks algorithm on DIPY peaks-and-metrics, a stopping image (FA) and a seed mask, and outputs a .trk tractogram.**
+
+Wraps the DIPY 1.1.1 command-line workflow dipy_track_local with --tracking_method closestpeaks. Use it after fitting a DIPY reconstruction model that produced a peaks-and-metrics (PAM) file. It needs the PAM file, a tensor dataset whose FA image is used as the stopping criterion (thresholded by stopping_thr), and a binary seed mask; the result is written as output/track.trk. Sibling Apps in the same repository run the other dipy_track_local algorithms.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/peaks_and_metrics` · `neuro/tensor` · `neuro/mask` |
+| 📤 **Outputs** | `neuro/track/trk` |
+| 🐳 **Container** | `brainlife/dipy:1.1.1` |
+| ⚙️ **Resources** | 8 CPUs |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.331](https://doi.org/10.25663/brainlife.app.331) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `pam_files` | `neuro/peaks_and_metrics` | yes | DIPY peaks-and-metrics (PAM) file with the fiber orientation peaks used for tracking. |
+| `stopping_files` | `neuro/tensor` | yes | Tensor dataset; only its FA image is passed to dipy_track_local as the stopping image (md, rd and ad are mapped but not used). Must be in the same space and grid as the PAM file and the seed mask. |
+| `seeding_files` | `neuro/mask` | yes | Binary mask; streamlines are seeded inside it with seed_density seeds per voxel dimension. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `output` | `neuro/track/trk` | Whole-brain tractogram in TrackVis .trk format (track.trk). |
+
+<details>
+<summary><b>⚙️ Parameters</b> (7)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `tracking_method` | string | `closestpeaks` | Tracking algorithm passed to dipy_track_local --tracking_method; fixed to 'closestpeaks' for this App. |
+| `use_binary_mask` | boolean | `false` | If True, uses a binary stopping criterion. If the provided `stopping_files` are not binary, `stopping_thr` will be used to binarize the images. |
+| `stopping_thr` | number | `0.25` | Threshold applied to stopping volume's data to identify where tracking has to stop (default 0.25). |
+| `seed_density` | number | `1` | Number of seeds per dimension inside voxel (default 1). For example, seed_density of 2 means 8 regularly distributed points in the voxel. And seed density of 1 means 1 point at the center of the voxel. |
+| `step_size` | number | `0.5` | Step size used for tracking (default 0.5mm) |
+| `pmf_threshold` | number | `0.1` | Threshold for ODF functions |
+| `max_angle` | number | `30` | Maximum angle between streamline segments (range [0, 90] |
+
+</details>
+
+📚 **References used by this App:**
+- Garyfallidis E, et al. Dipy, a library for the analysis of diffusion MRI data. Front Neuroinform 8:8 (2014). [doi:10.3389/fninf.2014.00008](https://doi.org/10.3389/fninf.2014.00008)
+- Avesani P, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
+
+<!-- brainlife-app:end -->
+
 The App offers 4 Fiber Trackings algorithms: Deterministic Tracking, Probabilistic Tracking, Eudx Tracking, Closest Peaks Tracking.
 
 ### Authors
